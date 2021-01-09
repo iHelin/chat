@@ -1,7 +1,5 @@
 package io.github.ihelin.seven.chat.server;
 
-import io.github.ihelin.seven.chat.server.project.netty.NettyServer;
-
 //启动服务端
 public class ServerMain {
 
