@@ -39,7 +39,7 @@ public class NettyServer {
 
             //同步启动服务端
             ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
-            System.out.println("服务端启动……");
+            System.out.println("服务端启动，port:" + port);
             //同步关闭资源
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
