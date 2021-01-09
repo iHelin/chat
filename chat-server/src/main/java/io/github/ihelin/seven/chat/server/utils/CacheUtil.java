@@ -9,20 +9,21 @@ import java.util.HashMap;
  */
 public class CacheUtil {
     //缓存数据存储
-    private static HashMap<String,Channel> cacheSC = new HashMap <>();
-    private static HashMap<Channel,String> cacheCS = new HashMap <>();
-    private static HashMap<Integer,Channel> cache = new HashMap<>();
-    private static HashMap<Channel,Integer> caches = new HashMap<>();
+    private static HashMap<String, Channel> cacheSC = new HashMap<>();
+    private static HashMap<Channel, String> cacheCS = new HashMap<>();
+    private static HashMap<Integer, Channel> cache = new HashMap<>();
+    private static HashMap<Channel, Integer> caches = new HashMap<>();
 
     //添加缓存
     public static void put(String name, Channel channel) {
-        cacheSC.put(name,channel);
-        cacheCS.put(channel,name);
+        cacheSC.put(name, channel);
+        cacheCS.put(channel, name);
     }
+
     //添加缓存
-    public static void put(Integer id,Channel channel){
-        caches.put(channel,id);
-        cache.put(id,channel);
+    public static void put(Integer id, Channel channel) {
+        caches.put(channel, id);
+        cache.put(id, channel);
     }
 
     //删除缓存
@@ -36,7 +37,7 @@ public class CacheUtil {
 
     public static void del(Channel channel) {
         String s = cacheCS.get(channel);
-        if (s!=null) {
+        if (s != null) {
             cacheCS.remove(channel);
             cacheSC.remove(s);
         }
@@ -48,7 +49,7 @@ public class CacheUtil {
         return cacheSC.get(name);
     }
 
-    public static Channel get(Integer id){
+    public static Channel get(Integer id) {
         return cache.get(id);
     }
 }

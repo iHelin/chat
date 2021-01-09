@@ -12,19 +12,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-        logger.debug("channelRead0.................");
-    }
-
-    /**
-     * 接收数据
-     */
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println(msg);
+    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        logger.debug("receive msg:{}", msg);
         //获取当前通道
         Channel channel = ctx.channel();
-        String message = NettyController.processing((String) msg, channel);
+        String message = NettyController.processing(msg, channel);
 
         //将消息写回客户端
         if (message != null) {

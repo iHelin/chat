@@ -2,7 +2,7 @@ package io.github.ihelin.seven.chat.server.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.ihelin.seven.chat.server.bean.Information;
-import io.github.ihelin.seven.chat.server.constant.EnMsgType;
+import io.github.ihelin.seven.chat.server.constant.MsgType;
 import io.github.ihelin.seven.chat.server.dao.*;
 import io.github.ihelin.seven.chat.server.utils.CacheUtil;
 import io.github.ihelin.seven.chat.server.utils.JsonUtils;
@@ -22,37 +22,37 @@ public class NettyController {
         ObjectNode jsonNodes = JsonUtils.getObjectNode(message);
         if (jsonNodes != null) {
             String msgType = jsonNodes.get("msgType").textValue();
-            if (EnMsgType.EN_MSG_LOGIN.toString().equals(msgType)) {
+            if (MsgType.EN_MSG_LOGIN.toString().equals(msgType)) {
                 //登录操作
-                return loginOperation(jsonNodes, channel);
-            } else if (EnMsgType.EN_MSG_MODIFY_SIGNATURE.toString().equals(msgType)) {
+                return handleLogin(jsonNodes, channel);
+            } else if (MsgType.EN_MSG_MODIFY_SIGNATURE.toString().equals(msgType)) {
                 //修改签名
                 return modifySignature(jsonNodes);
-            } else if (EnMsgType.EN_MSG_MODIFY_NICKNAME.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_MODIFY_NICKNAME.toString().equals(msgType)) {
                 //修改昵称
                 return modifyNickname(jsonNodes);
-            } else if (EnMsgType.EN_MSG_GETINFORMATION.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_GETINFORMATION.toString().equals(msgType)) {
                 //获取登录信息
                 return getInformation(jsonNodes);
-            } else if (EnMsgType.EN_MSG_VERIFY_PASSWORD.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_VERIFY_PASSWORD.toString().equals(msgType)) {
                 //进行修改密码
                 return verifyPasswd(jsonNodes);
-            } else if (EnMsgType.EN_MSG_CHAT.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_CHAT.toString().equals(msgType)) {
                 //单聊模式
                 return SingleChat(jsonNodes);
-            } else if (EnMsgType.EN_MSG_GET_ID.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_GET_ID.toString().equals(msgType)) {
                 //获取id
                 return getId(jsonNodes);
-            } else if (EnMsgType.EN_MSG_GET_FRIEND.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_GET_FRIEND.toString().equals(msgType)) {
                 //获取好友列表
                 return getFriend(jsonNodes);
-            } else if (EnMsgType.EN_MSG_ADD_FRIEND.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_ADD_FRIEND.toString().equals(msgType)) {
                 //添加好友
                 return addFriends(jsonNodes);
-            } else if (EnMsgType.EN_MSG_DEL_FRIEND.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_DEL_FRIEND.toString().equals(msgType)) {
                 //删除好友
                 return delFriend(jsonNodes);
-            } else if (EnMsgType.EN_MSG_ACTIVE_STATE.toString().equals(msgType)) {
+            } else if (MsgType.EN_MSG_ACTIVE_STATE.toString().equals(msgType)) {
                 //判断好友的在线状态
                 return friendIsActive(jsonNodes);
             }
@@ -64,11 +64,11 @@ public class NettyController {
 
     //判断好友在线状态
     private static String friendIsActive(ObjectNode jsonNodes) {
-        int friendId = jsonNodes.get("friendId").asInt();
+        int friendId = jsonNodes.get("friendId").intValue();
 
         ObjectNode objectNode = JsonUtils.getObjectNode();
-        objectNode.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        objectNode.put("srcType", EnMsgType.EN_MSG_ACTIVE_STATE.toString());
+        objectNode.put("msgType", MsgType.EN_MSG_ACK.toString());
+        objectNode.put("srcType", MsgType.EN_MSG_ACTIVE_STATE.toString());
 
         //客户端保证用户独立存在且是好友
         Channel channel = CacheUtil.get(friendId);
@@ -85,14 +85,14 @@ public class NettyController {
 
     //添加好友
     private static String delFriend(ObjectNode jsonNodes) {
-        Integer friendId = jsonNodes.get("friendId").asInt();
-        int userId = jsonNodes.get("id").asInt();
-        String localName = jsonNodes.get("localName").asText();
+        Integer friendId = jsonNodes.get("friendId").intValue();
+        int userId = jsonNodes.get("id").intValue();
+        String localName = jsonNodes.get("localName").textValue();
 
         //封装发回客户端的JSON
         ObjectNode objectNode = JsonUtils.getObjectNode();
-        objectNode.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        objectNode.put("srcType", EnMsgType.EN_MSG_DEL_FRIEND.toString());
+        objectNode.put("msgType", MsgType.EN_MSG_ACK.toString());
+        objectNode.put("srcType", MsgType.EN_MSG_DEL_FRIEND.toString());
         objectNode.put("code", 200);
 
         //验证是否存在当前好友
@@ -111,15 +111,15 @@ public class NettyController {
 
     //添加好友
     private static String addFriends(ObjectNode jsonNodes) {
-        Integer friendId = jsonNodes.get("friendId").asInt();
-        int userId = jsonNodes.get("id").asInt();
-        String localName = jsonNodes.get("localName").asText();
+        Integer friendId = jsonNodes.get("friendId").intValue();
+        int userId = jsonNodes.get("id").intValue();
+        String localName = jsonNodes.get("localName").textValue();
 
         //验证是否有ID
         boolean exists = userDao.verifyExistFriend(friendId);
         ObjectNode objectNode = JsonUtils.getObjectNode();
-        objectNode.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        objectNode.put("srcType", EnMsgType.EN_MSG_ADD_FRIEND.toString());
+        objectNode.put("msgType", MsgType.EN_MSG_ACK.toString());
+        objectNode.put("srcType", MsgType.EN_MSG_ADD_FRIEND.toString());
         objectNode.put("code", 200);
 
         if (exists) {
@@ -138,14 +138,14 @@ public class NettyController {
     //获取好友列表
     private static String getFriend(ObjectNode jsonNodes) {
 
-        int uid = jsonNodes.get("uid").asInt();
+        int uid = jsonNodes.get("uid").intValue();
 
         //返回ArrayLis集合
         ArrayList<String> friends = friendDao.getFriends(uid);
         //封装JSON
         ObjectNode objectNode = JsonUtils.getObjectNode();
-        objectNode.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        objectNode.put("srcType", EnMsgType.EN_MSG_GET_FRIEND.toString());
+        objectNode.put("msgType", MsgType.EN_MSG_ACK.toString());
+        objectNode.put("srcType", MsgType.EN_MSG_GET_FRIEND.toString());
 
         //写回friend集合
         Iterator<String> iterator = friends.iterator();
@@ -162,14 +162,14 @@ public class NettyController {
 
     //获取id
     private static String getId(ObjectNode jsonNodes) {
-        String nickname = jsonNodes.get("nickname").asText();
+        String nickname = jsonNodes.get("nickname").textValue();
         Information information = informationDao.nicknameGetId(nickname);
         //联系人的id
         int uid = information.getUid();
         //封装JSON
         ObjectNode objectNode = JsonUtils.getObjectNode();
-        objectNode.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        objectNode.put("srcType", EnMsgType.EN_MSG_GET_ID.toString());
+        objectNode.put("msgType", MsgType.EN_MSG_ACK.toString());
+        objectNode.put("srcType", MsgType.EN_MSG_GET_ID.toString());
         objectNode.put("uid", uid);
         return objectNode.toString();
     }
@@ -177,14 +177,14 @@ public class NettyController {
     //单聊模式
     private static String SingleChat(ObjectNode jsonNodes) {
 
-        int id = jsonNodes.get("id").asInt();
+        int id = jsonNodes.get("id").intValue();
 
         //根据id在friend表获取登录用户名
 
         //封装JSON数据服务端转发数据
         ObjectNode objectNode = JsonUtils.getObjectNode();
-        objectNode.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        objectNode.put("srcType", EnMsgType.EN_MSG_CHAT.toString());
+        objectNode.put("msgType", MsgType.EN_MSG_ACK.toString());
+        objectNode.put("srcType", MsgType.EN_MSG_CHAT.toString());
 
         //客户端保证用户独立存在且是好友
         Channel channel = CacheUtil.get(id);
@@ -203,14 +203,14 @@ public class NettyController {
 
     //修改密码
     private static String verifyPasswd(ObjectNode jsonNodes) {
-        int id = jsonNodes.get("id").asInt();
-        String oldPasswd = jsonNodes.get("oldPasswd").asText();
-        String newPasswd = jsonNodes.get("newPasswd").asText();
+        int id = jsonNodes.get("id").intValue();
+        String oldPasswd = jsonNodes.get("oldPasswd").textValue();
+        String newPasswd = jsonNodes.get("newPasswd").textValue();
 
         boolean exits = userDao.verifyPassword(oldPasswd, id);
 
         ObjectNode objectNode = JsonUtils.getObjectNode();
-        objectNode.put("msgType", EnMsgType.EN_MSG_VERIFY_PASSWORD.toString());
+        objectNode.put("msgType", MsgType.EN_MSG_VERIFY_PASSWORD.toString());
         objectNode.put("code", 200);
         if (exits) {
             //验证成功
@@ -222,14 +222,14 @@ public class NettyController {
 
     //获取信息
     private static String getInformation(ObjectNode jsonNodes) {
-        int id = jsonNodes.get("id").asInt();
+        int id = jsonNodes.get("id").intValue();
 
         Information information = informationDao.getInformation(id);
 
         //封装JSON发回客户端
         ObjectNode objectNode = JsonUtils.getObjectNode();
-        objectNode.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        objectNode.put("srcType", EnMsgType.EN_MSG_GETINFORMATION.toString());
+        objectNode.put("msgType", MsgType.EN_MSG_ACK.toString());
+        objectNode.put("srcType", MsgType.EN_MSG_GETINFORMATION.toString());
         objectNode.put("Nickname", information.getNickname());
         objectNode.put("Signature", information.getSignature());
 
@@ -238,8 +238,8 @@ public class NettyController {
 
     //修改昵称
     private static String modifyNickname(ObjectNode jsonNodes) {
-        int id = jsonNodes.get("id").asInt();
-        String nickname = jsonNodes.get("nickname").asText();
+        int id = jsonNodes.get("id").intValue();
+        String nickname = jsonNodes.get("nickname").textValue();
         //进行存储
         informationDao.storeNickname(nickname, id);
         return "";
@@ -247,24 +247,23 @@ public class NettyController {
 
     //修改签名
     private static String modifySignature(ObjectNode jsonNodes) {
-        int id = jsonNodes.get("id").asInt();
-        String signature = jsonNodes.get("signature").asText();
+        int id = jsonNodes.get("id").intValue();
+        String signature = jsonNodes.get("signature").textValue();
         //进行存储
         informationDao.storeSignature(signature, id);
         return "";
     }
 
     //登录操作
-    private static String loginOperation(ObjectNode objectNode, Channel channel) {
-
-        int id = objectNode.get("id").asInt();
-        String passwd = objectNode.get("passwd").asText();
+    private static String handleLogin(ObjectNode objectNode, Channel channel) {
+        int id = objectNode.get("id").intValue();
+        String passwd = objectNode.get("passwd").textValue();
         //进行数据库查询
         boolean exits = userDao.getInformation(id, passwd);
 
         ObjectNode jsonNodes = JsonUtils.getObjectNode();
-        jsonNodes.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        jsonNodes.put("srcType", EnMsgType.EN_MSG_LOGIN.toString());
+        jsonNodes.put("msgType", MsgType.EN_MSG_ACK.toString());
+        jsonNodes.put("srcType", MsgType.EN_MSG_LOGIN.toString());
         jsonNodes.put("code", 300);
         //返回状态码
         if (exits) {

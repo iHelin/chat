@@ -21,11 +21,11 @@ public class UserDaoImpl implements UserDao {
         try {
             //查询数据库
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1,id);
-            preparedStatement.setString(2,passwd);
+            preparedStatement.setInt(1, id);
+            preparedStatement.setString(2, passwd);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 //表示查询成功
                 flag = true;
             }
@@ -51,12 +51,12 @@ public class UserDaoImpl implements UserDao {
         //查询数据库
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1,oldPasswd);
-            preparedStatement.setInt(2,id);
+            preparedStatement.setString(1, oldPasswd);
+            preparedStatement.setInt(2, id);
 
             //执行preparedStatement里面的SQL
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 //密码验证正确
                 flag = true;
             }
@@ -77,14 +77,14 @@ public class UserDaoImpl implements UserDao {
         //查询数据库
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1,newPasswd);
-            preparedStatement.setInt(2,id);
+            preparedStatement.setString(1, newPasswd);
+            preparedStatement.setInt(2, id);
 
             //执行sql
             preparedStatement.executeUpdate();
 
             //关闭资源
-            if (preparedStatement != null){
+            if (preparedStatement != null) {
                 preparedStatement.close();
             }
         } catch (SQLException e) {
@@ -100,10 +100,10 @@ public class UserDaoImpl implements UserDao {
         boolean flag = false;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 flag = true;
             }
 

@@ -1,6 +1,6 @@
 package io.github.ihelin.seven.chat.server.constant;
 
-public enum EnMsgType {
+public enum MsgType {
 
     //用户登录消息
     EN_MSG_LOGIN,
