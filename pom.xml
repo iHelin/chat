@@ -15,10 +15,7 @@
         <module>chat-client</module>
     </modules>
 
-
     <name>chat</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,13 +24,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-
         <!--netty依赖-->
         <dependency>
             <groupId>io.netty</groupId>
