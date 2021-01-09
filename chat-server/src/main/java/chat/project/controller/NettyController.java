@@ -264,7 +264,7 @@ public class NettyController {
 
         ObjectNode jsonNodes = JsonUtils.getObjectNode();
         jsonNodes.put("msgType", EnMsgType.EN_MSG_ACK.toString());
-        jsonNodes.put("srctype", EnMsgType.EN_MSG_LOGIN.toString());
+        jsonNodes.put("srcType", EnMsgType.EN_MSG_LOGIN.toString());
         jsonNodes.put("code", 300);
         //返回状态码
         if (exits) {
