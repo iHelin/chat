@@ -130,8 +130,8 @@ public class Linkmen extends JFrame {
         //设置在线状态bBox();
         box = new JComboBox();
         box.addItem("✅在线");
-        box.addItem("\uD83D\uDCBF隐身");
-        box.addItem("\uD83D\uDCBB忙碌");
+        box.addItem("隐身");
+        box.addItem("忙碌");
         box.addItem("❎离线");
         box.setBounds(200, 10, 70, 30);
         panel_1.add(box);
@@ -160,47 +160,43 @@ public class Linkmen extends JFrame {
 
         //对面板三进行初始化
         box_1 = new JComboBox();
-        box_1.addItem("\uD83D\uDD12\uD83D\uDD28\uD83D\uDD13");
         box_1.addItem("修改密码");
         box_1.addItem("修改昵称");
         box_1.addItem("修改签名");
         box_1.setBounds(8, 20, 100, 25);
         panel_3.add(box_1);
-        box_1.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if ("修改签名".equals(box_1.getSelectedItem())) {
-                    //执行一次
-                    if (e.getStateChange() == ItemEvent.SELECTED) {
-                        ChangeSignature changeSignature = new ChangeSignature(Linkmen.this);
-                        changeSignature.setVisible(true);
-                        field.setText(changeSignature.jTextField.getText());
-                        String signature = field.getText();
-                        //存储签名的方法
-                        new SendServers(channel).modifySignature(signature, id);
-                    }
+        box_1.addItemListener(e -> {
+            if ("修改签名".equals(box_1.getSelectedItem())) {
+                //执行一次
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    ChangeSignature changeSignature = new ChangeSignature(Linkmen.this);
+                    changeSignature.setVisible(true);
+                    field.setText(changeSignature.jTextField.getText());
+                    String signature = field.getText();
+                    //存储签名的方法
+                    new SendServers(channel).modifySignature(signature, id);
                 }
-                if ("修改密码".equals(box_1.getSelectedItem())) {
-                    if (e.getStateChange() == ItemEvent.SELECTED) {
-                        ChangePassword changePassword = new ChangePassword(Linkmen.this);
-                        changePassword.setVisible(true);
-                        label_5.setText(changePassword.oldPassword.getText());
-                        String oldPasswd = label_5.getText();
-                        label_6.setText(new String(changePassword.newPassword.getPassword()));
-                        String newPasswd = label_6.getText();
-                        //进行验证
-                        new SendServers(channel).verifyPasswd(oldPasswd, id,newPasswd);
-                    }
+            }
+            if ("修改密码".equals(box_1.getSelectedItem())) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    ChangePassword changePassword = new ChangePassword(Linkmen.this);
+                    changePassword.setVisible(true);
+                    label_5.setText(changePassword.oldPassword.getText());
+                    String oldPasswd = label_5.getText();
+                    label_6.setText(new String(changePassword.newPassword.getPassword()));
+                    String newPasswd = label_6.getText();
+                    //进行验证
+                    new SendServers(channel).verifyPasswd(oldPasswd, id,newPasswd);
                 }
-                if ("修改昵称".equals(box_1.getSelectedItem())) {
-                    if (e.getStateChange() == ItemEvent.SELECTED) {
-                        ChangeNickname changeNickname = new ChangeNickname(Linkmen.this);
-                        changeNickname.setVisible(true);
-                        label_1.setText(changeNickname.jTextField.getText());
-                        String nickname = label_1.getText();
-                        //存储昵称
-                        new SendServers(channel).modifyNickname(nickname, id);
-                    }
+            }
+            if ("修改昵称".equals(box_1.getSelectedItem())) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    ChangeNickname changeNickname = new ChangeNickname(Linkmen.this);
+                    changeNickname.setVisible(true);
+                    label_1.setText(changeNickname.jTextField.getText());
+                    String nickname = label_1.getText();
+                    //存储昵称
+                    new SendServers(channel).modifyNickname(nickname, id);
                 }
             }
         });
@@ -278,8 +274,8 @@ public class Linkmen extends JFrame {
     public void mian() {
         //初始化面板2并设置信息
         model = new DefaultListModel<>();
-        for (int i = 0; i < fd.length; i++) {
-            model.addElement(fd[i]);
+        for (String s : fd) {
+            model.addElement(s);
         }
         init();
         //更新昵称和签名
